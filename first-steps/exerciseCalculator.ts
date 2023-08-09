@@ -8,6 +8,16 @@ interface ExerciseResult {
     average: number; 
 }
 
+const parseArgs = (args: string[]): number[] => {
+  if (args.length < 3) throw new Error('not enough arguments');
+
+  if (args.slice(2).every(item => !isNaN(Number(item)))) {
+    return args.slice(2).map(item => Number(item))
+  } else {
+    throw new Error('some training hour values were not numbers.')
+  }
+}
+
 const calculateExercises = (dailyHours: number[]) : ExerciseResult => {
   const trainingTarget: number = 2;
   const periodLength: number = dailyHours.length;
@@ -32,7 +42,9 @@ const calculateExercises = (dailyHours: number[]) : ExerciseResult => {
 }
 
 try {
-  console.log(calculateExercises([0,1,2,3,4,5,6,7,8,9]));
+  const exercises = parseArgs(process.argv)
+  console.log(exercises)
+  console.log(calculateExercises(exercises));
 } catch (error: unknown) {
   let errorMessage = 'Something went wrong: '
   if (error instanceof Error) {
