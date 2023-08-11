@@ -18,8 +18,11 @@ const parseArgs = (args: string[]): number[] => {
   }
 };
 
-const calculateExercises = (dailyHours: number[]) : ExerciseResult => {
-  const trainingTarget: number = 2;
+export const calculateExercises = (dailyHours: number[], trainingTarget?: number) : ExerciseResult => {
+  //const trainingTarget: number = 2;
+  if (!trainingTarget) {
+    trainingTarget=2;
+  }
   const periodLength: number = dailyHours.length;
   const trainingDays: number = dailyHours.filter(Number).length;
   const sum: number = dailyHours.reduce((a,b) => a+b, 0);
