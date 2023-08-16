@@ -38,6 +38,7 @@ const App = () => {
     } catch (error) {
       if (axios.isAxiosError<ValidationError, Record<string, unknown>>(error)) {
         const e = error as AxiosError
+        console.log(e)
         setErrorMsg(String(e.response?.data))
       } else {
         setErrorMsg('unknown error')
@@ -56,7 +57,7 @@ const App = () => {
       <div>
     date: &nbsp;
         <input
-          type="text"
+          type="date"
           value={ date }
           name="date"
           id="date"
@@ -65,23 +66,65 @@ const App = () => {
       </div>
       <div>
     visibility: &nbsp;
+    great
         <input
-          type="text"
-          value={ visibility }
+          type="radio"
           name="visibility"
-          id="visibility"
-          onChange={({ target }) => setVisibility(target.value)}
+          onChange={() => setVisibility("great")}
         />
+      good
+        <input
+          type="radio"
+          name="visibility"
+          onChange={() => setVisibility("good")}
+        />
+      ok
+        <input
+          type="radio"
+          name="visibility"
+          onChange={() => setVisibility("ok")}
+        />
+      poor
+        <input
+          type="radio"
+          name="visibility"
+          onChange={() => setVisibility("poor")}
+        />
+
       </div>
       <div>
     weather: &nbsp;
+    sunny
         <input
-          type="text"
-          value={ weather }
+          type="radio"
           name="weather"
-          id="weather"
-          onChange={({ target }) => setWeather(target.value)}
+           onChange={() => setWeather("sunny")}
         />
+    rainy
+        <input
+          type="radio"
+          name="weather"
+           onChange={() => setWeather("rainy")}
+        />
+    cloudy
+        <input
+          type="radio"
+          name="weather"
+           onChange={() => setWeather("cloudy")}
+        />
+    stormy
+        <input
+          type="radio"
+          name="weather"
+           onChange={() => setWeather("stormy")}
+        />
+    windy
+        <input
+          type="radio"
+          name="weather"
+           onChange={() => setWeather("windy")}
+        />
+
         </div>
         <div>
     comment: &nbsp;
