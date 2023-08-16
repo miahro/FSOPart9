@@ -1,11 +1,14 @@
 import { useState, useEffect } from 'react';
 import { getAll, createDiary } from './services/diaryService'
-import { DiaryEntry } from './types';
+import { DiaryEntry, ValidationError } from './types';
 import { Diaries } from './components/diaries'
+import axios, {AxiosError} from 'axios'
 //import { DiaryForm } from './components/diaryForm'
+
 
 const App = () => {
   //const [newDiary, setNewDiary] = useState('');
+  const [errorMsg, setErrorMsg] = useState('')
   const [diaries, setDiaries] = useState<DiaryEntry[]>([]);
   const [date, setDate] = useState('');
   const [weather, setWeather] = useState('');
@@ -19,17 +22,36 @@ const App = () => {
 
   }, [])
 
-  const diaryCreation = (event: React.SyntheticEvent) => {
+
+
+  const diaryCreation = async (event: React.SyntheticEvent) => {
     event.preventDefault()
-    createDiary( {date, weather, visibility, comment } ).then(data => {
-    setDiaries(diaries.concat(data))
-    })
-  }
+    try {
+   await createDiary( {date, weather, visibility, comment } )
+      .then(data => {
+      setDiaries(diaries.concat(data))
+      setDate('')
+      setWeather('')
+      setVisibility('')
+      setComment('')
+      })
+    } catch (error) {
+      if (axios.isAxiosError<ValidationError, Record<string, unknown>>(error)) {
+        const e = error as AxiosError
+        setErrorMsg(String(e.response?.data))
+      } else {
+        setErrorMsg('unknown error')
+      }
+      setTimeout(() => {
+        setErrorMsg('')
+      }, 5000)
+    }}
 
   return (
     <div>
     <div>
     <h2>Add new entry</h2>
+    {errorMsg && <p style={{color:'red'}}> {errorMsg}</p>}
     <form onSubmit={diaryCreation}>
       <div>
     date: &nbsp;
@@ -80,5 +102,6 @@ const App = () => {
   </div>    
 
   )
-}
+  }
+  
 export default App;
