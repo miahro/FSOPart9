@@ -1,5 +1,6 @@
 import { DiaryEntry } from "../types"
 
+
 export const Diaries = ( { diaries }: { diaries: DiaryEntry[] }): JSX.Element => {
 
   return (
