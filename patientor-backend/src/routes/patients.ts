@@ -10,7 +10,9 @@ router.get('/', (_req, res) => {
 
 router.post('/', (req, res)=> {
   try {
+    
     const newPatient = toNewPatientEntry(req.body);
+    console.log('toNewPatientEnry returns: ', newPatient);
     const addedPatient = patientService.addPatient(newPatient);
     res.json(addedPatient);
   } catch (error: unknown) {
@@ -21,12 +23,6 @@ router.post('/', (req, res)=> {
     res.status(400).send(errorMessage);
   }
 
-
-  // // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-  // const { name, dateOfBirth, ssn, gender, occupation } = req.body;
-  // // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-  // res.send(patientService.addPatient(name, dateOfBirth, ssn, gender, occupation));  
-  //res.send('saving patient');
 });
 
 export default router;
