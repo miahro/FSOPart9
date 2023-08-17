@@ -1,9 +1,10 @@
 import { v1 as uuid } from 'uuid';
-import patientData from '../../data/patients';
+//import patientData from '../../data/patients';
+import patientData from '../../data/patients-full';
 import { Patient, NewPatient, NonSensitivePatient } from '../types';
 
 
-const patients: Patient[] = patientData as Array<Patient>;
+const patients: Patient[] = patientData;
 
 const getPatients = (): Patient[] => {
   console.log(patients);
