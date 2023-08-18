@@ -21,12 +21,18 @@ interface HealthCheckEntry extends BaseEntry {
 interface OccupationalHealthcareEntry extends BaseEntry {
   type: "OccupationalHealthcare";
   employerName: string;
-  sickLeave?: object
+  sickLeave?: {
+    startDate: string;
+    endDate: string;
+  }
 }
 
 interface HospitalEntry extends BaseEntry {
   type: "Hospital";
-  discharge: object
+  discharge: {
+    date: string;
+    crtiteria: string;
+  }
 }
 
 export type Entry =
@@ -53,7 +59,7 @@ export interface Patient {
   ssn: string;
   gender: Gender;
   occupation: string;
-  entries: Entry[]
+  entries: Array<Entry>
 }
 
 export type NonSensitivePatient = Omit<Patient, 'ssn' | 'entries'>;
