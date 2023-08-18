@@ -31,7 +31,7 @@ interface HospitalEntry extends BaseEntry {
   type: "Hospital";
   discharge: {
     date: string;
-    crtiteria: string;
+    criteria: string;
   }
 }
 
