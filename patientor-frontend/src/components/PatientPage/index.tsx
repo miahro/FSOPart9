@@ -1,26 +1,13 @@
-//import { useState } from "react";
 import { useParams } from "react-router-dom"
-//import { Box, Table, Button, TableHead, Typography, TableCell, TableRow, TableBody, Icon } from '@mui/material';
-//import axios from 'axios';
-
-import { Patient, Gender } from "../../types";
-//import { DriveFileMove } from "@mui/icons-material";
-//import AddPatientModal from "../AddPatientModal";
-
-//import HealthRatingBar from "../HealthRatingBar";
-
-//import patientService from "../../services/patients";
-
-
+import { Patient, Gender, Diagnosis } from "../../types";
+import { DiagnoseListItem } from './DiagnoseList'
 
 interface Props {
-  patients : Patient[]
+  patients : Patient[];
+  diagnoses: Diagnosis[];
 }
 
-
-
-
-const PatientPage = ({ patients } : Props) => {
+const PatientPage = ({ patients, diagnoses } : Props) => {
   const param = useParams<{id: string}>()
   let id: string = ''
   if (param.id) {
@@ -28,6 +15,8 @@ const PatientPage = ({ patients } : Props) => {
   } 
   
   const patient = patients.find(p => p.id === id)
+  //console.log('in PatientPage diagnoses: ', diagnoses)
+  //console.log('in Patienes diagnose code Z57.1', diagnoses.find( d => d.code === 'Z57.1'))
 
   const genderIcon = (gender: Gender) => {
     if (gender === 'male') {
@@ -39,7 +28,6 @@ const PatientPage = ({ patients } : Props) => {
       return <span>?</span>;
     }
   }
-
 
   if (patient && patient.name && patient.ssn && patient.occupation && patient.entries) {
   return (
@@ -55,13 +43,14 @@ const PatientPage = ({ patients } : Props) => {
           <p>{e.description}</p>
           <ul>
             {e.diagnosisCodes?.map(code => (
-              <li key={code}>{code}</li>
+            <DiagnoseListItem code = {code} diagnoses={diagnoses} />
             ))}
+
           </ul>
           </div>
         )
       })
-    }
+      }
 
       </div>
 
