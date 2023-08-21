@@ -1,4 +1,4 @@
-import { NewPatient, Gender } from './types';
+import { NewPatient, Gender, EntryWithoutId, NewBaseEntry, Diagnosis } from './types';
 
 const isString = (text: unknown): text is string => {
   return typeof text === 'string' || text instanceof String;
@@ -36,8 +36,65 @@ const parseGender = (gender: unknown): Gender => {
 };
 
 
-const toNewPatientEntry = (object: unknown): NewPatient => {
-  console.log(object);
+const parseDiagnosisCodes = (object: unknown): Array<Diagnosis['code']> =>  {
+  if (!object || typeof object !== 'object' || !('diagnosisCodes' in object)) {
+    // we will just trust the data to be in correct form
+    return [] as Array<Diagnosis['code']>;
+  }
+
+  return object.diagnosisCodes as Array<Diagnosis['code']>;
+};
+
+
+const parseDischarge = (object: unknown) => {
+  if( !object || typeof object !== 'object' ){
+      throw new Error('Incorrect or missing data');
+  }
+
+  if( 'date' in object
+     && 'criteria' in object){
+      const discharge = {
+          date: parseDate(object.date),
+          criteria: parseText(object.criteria)
+      };
+      return discharge;
+  }
+  throw new Error('Incorrect of missing data');
+};
+
+const parseSickLeave = (object: unknown) => {
+  if( !object || typeof object !== 'object' ){
+      throw new Error('Incorrect or missing data');
+  }
+
+  if( 'startDate' in object
+     && 'endDate' in object){
+      const sickLeave = {
+          startDate: parseDate(object.startDate),
+          endDate: parseText(object.endDate)
+      };
+      return sickLeave;
+  }
+  throw new Error('Incorrect of missing data');
+};
+
+const parseHealthCheckRating = (object: unknown) => {
+ //console.log('parseHealthCheckRating gets called');
+  if( !object || typeof object !== 'object' ){
+      throw new Error('Incorrect or missing data');
+  }
+
+  if( 'healthCheckRating' in object){
+      const healthCheckRating = Number(object.healthCheckRating);
+      //console.log('in parseHealthCheckRating, healtcheckrating: ', healthCheckRating);
+      return healthCheckRating;
+  }
+  throw new Error('Incorrect of missing data');
+};
+
+
+export const toNewPatientEntry = (object: unknown): NewPatient => {
+  //console.log(object);
 
   if (!object || typeof object !== 'object') {
     throw new Error('Incorrect or missing data');
@@ -52,7 +109,7 @@ const toNewPatientEntry = (object: unknown): NewPatient => {
       occupation: parseText(object.occupation),
       entries: []
     };
-    console.log(newEntry);
+    //console.log(newEntry);
     return newEntry;
   }
 
@@ -60,4 +117,77 @@ const toNewPatientEntry = (object: unknown): NewPatient => {
   
 };
 
-export default toNewPatientEntry;
+export const toNewEntry = (object: unknown): EntryWithoutId => {
+  //console.log('utilts / toNewEntry: ', object);
+
+  if (!object || typeof object !== 'object') {
+    throw new Error('incorrect or missing data');
+  }
+  if ('type' in object && 'description' in object && 'date' in object && 'specialist' in object) {
+    
+    const newBaseEntry: NewBaseEntry = 'diagnosisCodes' in object ?
+    {
+        description: parseText(object.description),
+        date: parseDate(object.date),
+        specialist: parseText(object.specialist),
+        diagnosisCodes: parseDiagnosisCodes(object)
+    }
+    : 
+    {
+        description: parseText(object.description),
+        date: parseDate(object.date),
+        specialist: parseText(object.specialist)
+    };
+    //console.log('newBaseEntry:', newBaseEntry);
+
+    switch (object.type) {
+      case "Hospital":
+        if ('discharge' in object ) {
+          const newHospitalEntry: EntryWithoutId = {
+            ...newBaseEntry,
+            type: 'Hospital',
+            discharge: parseDischarge(object.discharge)  
+          };
+          return newHospitalEntry;
+          }
+          throw new Error('missing or incomplete data');
+      case "OccupationalHealthcare":
+      //  console.log("occupationalHealthCare");
+          if ('sickLeave' in object && 'employerName' in object) {
+            const newOccupationalEntry: EntryWithoutId = {
+              ...newBaseEntry,
+              type: 'OccupationalHealthcare',
+              employerName: parseText(object.employerName),
+              sickLeave: parseSickLeave(object.sickLeave)
+            };
+            return newOccupationalEntry;
+          } else if ('employerName' in object) {
+            const newOccupationalEntry: EntryWithoutId = {
+              ...newBaseEntry,
+              type: 'OccupationalHealthcare',
+              employerName: parseText(object.employerName)
+            };
+            return newOccupationalEntry;  
+          }
+          throw new Error('missing or incomplete data');
+      case 'HealthCheck':
+        //console.log("HealthCheckRating case");
+        if ("healthCheckRating" in object) {
+        //  console.log("healthCheckRating parameter found from object");
+          const newHealthCheckEntry: EntryWithoutId = {
+            ...newBaseEntry,
+            type: "HealthCheck",
+            healthCheckRating: parseHealthCheckRating(object)
+          };
+        //  console.log('newHealthCheckEntry: ', newHealthCheckEntry);
+          return newHealthCheckEntry;
+        } 
+        throw new Error('missing or incomplete data');
+    }
+  } 
+  throw new Error('incorrect or missing data');
+
+
+};
+
+export default {toNewPatientEntry, toNewEntry};

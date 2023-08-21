@@ -1,13 +1,13 @@
 import { v1 as uuid } from 'uuid';
 //import patientData from '../../data/patients';
 import patientData from '../../data/patients-full';
-import { Patient, NewPatient, NonSensitivePatient } from '../types';
+import { Patient, NewPatient, NonSensitivePatient, Entry, EntryWithoutId} from '../types';
 
 
 const patients: Patient[] = patientData;
 
 const getPatients = (): Patient[] => {
-  console.log(patients);
+  //console.log(patients);
   return patients;
 };
 
@@ -25,7 +25,7 @@ const getNonSensitivePatients = (): NonSensitivePatient[] => {
 
 
 const findById = (id: string): Patient | undefined => {
-  console.log('findById id: ', id, 'typeof', typeof id);
+  //console.log('findById id: ', id, 'typeof', typeof id);
   const patient = patients.find(p => p.id === id);
   return patient;
 };
@@ -42,9 +42,21 @@ const addPatient = (patient: NewPatient): Patient => {
   return newPatient;
 };
 
+const addEntry = (entry: EntryWithoutId, patient_id: string): Entry => {
+  const patient = findById(patient_id);
+  if (patient) {
+    const entry_id = uuid();
+    const newEntry = { id: entry_id, ...entry };
+    patient.entries.push(newEntry);
+    return newEntry;
+  }
+  throw new Error('adding entry failed');
+};
+
 export default {
   getPatients,
   getNonSensitivePatients,
   addPatient,
-  findById
+  findById,
+  addEntry
 };
