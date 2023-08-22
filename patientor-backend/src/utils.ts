@@ -118,7 +118,7 @@ export const toNewPatientEntry = (object: unknown): NewPatient => {
 };
 
 export const toNewEntry = (object: unknown): EntryWithoutId => {
-  //console.log('utilts / toNewEntry: ', object);
+  console.log('utilts / toNewEntry: ', object);
 
   if (!object || typeof object !== 'object') {
     throw new Error('incorrect or missing data');

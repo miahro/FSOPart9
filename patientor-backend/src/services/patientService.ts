@@ -43,6 +43,7 @@ const addPatient = (patient: NewPatient): Patient => {
 };
 
 const addEntry = (entry: EntryWithoutId, patient_id: string): Entry => {
+  console.log('addEntry called with parameters id: ', patient_id, 'entry: ', entry);
   const patient = findById(patient_id);
   if (patient) {
     const entry_id = uuid();
@@ -50,6 +51,7 @@ const addEntry = (entry: EntryWithoutId, patient_id: string): Entry => {
     patient.entries.push(newEntry);
     return newEntry;
   }
+  console.log('this should newer get executed');
   throw new Error('adding entry failed');
 };
 

@@ -37,7 +37,7 @@ export const HealthCheckEntryPage = ({ entry, diagnoses }: Props) => {
             <i>{entry.description}</i>
             <ul>
               {entry.diagnosisCodes?.map(code => (
-              <DiagnoseListItem code = {code} diagnoses={diagnoses} />
+              <DiagnoseListItem key={code} code = {code} diagnoses={diagnoses} />
               ))}
             </ul>
             {HealthRatingIcon(entry.healthCheckRating)}

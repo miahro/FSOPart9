@@ -28,11 +28,13 @@ router.post('/', (req, res)=> {
     if (error instanceof Error) {
       errorMessage += ' Error ' + error.message;
     }
+    console.log(errorMessage);
     res.status(400).send(errorMessage);
   }
 });
 
 router.post('/:id', (req, res) => {
+  console.log('router called');
   const { id } = req.params;
   try {
     const newEntry = toNewEntry(req.body);
@@ -40,10 +42,12 @@ router.post('/:id', (req, res) => {
     const addedEntry = patientService.addEntry(newEntry, id);
     res.json(addedEntry);
   } catch(error: unknown) {
+    console.log('error inn router');
     let errorMessage = 'Something went wrong';
     if (error instanceof Error) {
-      errorMessage += 'Error ' + errorMessage;
+      errorMessage += 'Error ' + error.message;
     }
+    console.log('error message: ', errorMessage);
     res.status(400).send(errorMessage);
   }
 });
